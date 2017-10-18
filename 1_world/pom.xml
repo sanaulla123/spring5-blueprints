@@ -14,7 +14,10 @@
 		<mysql.jdbc.driver.version>5.1.44</mysql.jdbc.driver.version>
 		<hikari.version>2.7.2</hikari.version>
 		<junit.version>4.12</junit.version>
-		<h2.version>1.4.196</h2.version>		
+		<h2.version>1.4.196</h2.version>
+		<assertj.version>3.8.0</assertj.version>
+		<apache.commons.version>3.6</apache.commons.version>
+		<hibernate.validator.version>6.0.2.Final</hibernate.validator.version>	
 	</properties>
 	<dependencies>
 		<dependency>
@@ -33,7 +36,6 @@
 			<artifactId>spring-beans</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
 		<dependency>
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-context</artifactId>
@@ -46,7 +48,11 @@
 		    <version>${hikari.version}</version>
 		</dependency>
 		
-		
+		<dependency>
+		    <groupId>org.hibernate.validator</groupId>
+		    <artifactId>hibernate-validator</artifactId>
+		    <version>${hibernate.validator.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
@@ -55,20 +61,11 @@
 		</dependency>
 		
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-test</artifactId>
-		    <version>${spring.version}</version>
-		    <scope>test</scope>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>${apache.commons.version}</version>
 		</dependency>
-
-		<dependency>
-		    <groupId>junit</groupId>
-		    <artifactId>junit</artifactId>
-		    <version>${junit.version}</version>
-		    <scope>test</scope>
-		</dependency>
-
-
+		
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -76,11 +73,30 @@
 			<version>${lombok.version}</version>
 		</dependency>
 		
+		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-test</artifactId>
+		    <version>${spring.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>${junit.version}</version>
+		    <scope>test</scope>
+		</dependency>
 		<dependency>
 		    <groupId>com.h2database</groupId>
 		    <artifactId>h2</artifactId>
 		    <version>${h2.version}</version>
 		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertj.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
