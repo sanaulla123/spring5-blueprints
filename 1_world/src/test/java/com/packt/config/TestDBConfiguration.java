@@ -13,6 +13,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 public class TestDBConfiguration {
+	
 	@Bean
     public DataSource dataSource() {
         return new EmbeddedDatabaseBuilder()
@@ -24,13 +25,7 @@ public class TestDBConfiguration {
             .build();
     }
 	
-	@Bean
-	public JdbcTemplate jdbcTemplate() {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource());
-		return jdbcTemplate;
-	}
-	
-	@Bean
+	@Bean("testTemplate")
 	public NamedParameterJdbcTemplate namedParamJdbcTemplate() {
 		NamedParameterJdbcTemplate namedParamJdbcTemplate = 
 				new NamedParameterJdbcTemplate(dataSource());

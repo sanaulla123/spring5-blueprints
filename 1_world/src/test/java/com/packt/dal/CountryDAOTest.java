@@ -8,9 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -23,10 +27,18 @@ public class CountryDAOTest {
 
 	@Autowired CountryDAO countryDao;
 	
+	@Autowired @Qualifier("testTemplate")
+	NamedParameterJdbcTemplate namedParamJdbcTemplate;
+	
+	@Before
+	public void setup() {
+		countryDao.setNamedParamJdbcTemplate(namedParamJdbcTemplate);
+	}
+	
 	@Test
 	public void testGetCountries() {
-		List<Country> countries = countryDao.getCountries(Collections.EMPTY_MAP);
-		assertTrue(countries.size() == 239);
+		List<Country> countries = countryDao.getCountries(new HashMap<>());
+		assertThat(countries).hasSize(20);
 		
 		Country c = countries.get(0);
 		assertThat(c.toString()).isEqualTo("Country(code=ABW, name=Aruba, "
@@ -39,7 +51,7 @@ public class CountryDAOTest {
 	
 	@Test
 	public void testGetCountries_searchByName() {
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("search", "Aruba");
 		List<Country> countries = countryDao.getCountries(params);
 		assertThat(countries).hasSize(1);
@@ -47,7 +59,7 @@ public class CountryDAOTest {
 	
 	@Test
 	public void testGetCountries_searchByLocalName() {
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("search", "Bharat/India");
 		List<Country> countries = countryDao.getCountries(params);
 		assertThat(countries).hasSize(1);
@@ -55,11 +67,11 @@ public class CountryDAOTest {
 	
 	@Test
 	public void testGetCountries_searchByContinent() {
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("continent", "Asia");
 		List<Country> countries = countryDao.getCountries(params);
 		
-		assertThat(countries).hasSize(51);
+		assertThat(countries).hasSize(20);
 	}
 	
 	@Test
@@ -73,5 +85,22 @@ public class CountryDAOTest {
 				+ "governmentForm=Federal Republic, headOfState=Kocheril Raman Narayanan, "
 				+ "capital=City(id=1109, name=New Delhi, countryCode=null, "
 				+ "country=null, district=null, population=null), code2=IN)");
+	}
+	
+	@Test public void testEditCountryDetail() {
+		Country c = countryDao.getCountryDetail("IND");
+		c.setHeadOfState("Ram Nath Kovind");
+		c.setPopulation(1324171354l);
+		countryDao.editCountryDetail("IND", c);
+		
+		c = countryDao.getCountryDetail("IND");
+		assertThat(c.getHeadOfState()).isEqualTo("Ram Nath Kovind");
+		assertThat(c.getPopulation()).isEqualTo(1324171354l);
+		assertThat(c.getName()).isEqualTo("India");
+	}
+	
+	@Test public void testGetCountriesCount() {
+		Integer count = countryDao.getCountriesCount(Collections.EMPTY_MAP);
+		assertThat(count).isEqualTo(239);
 	}
 }

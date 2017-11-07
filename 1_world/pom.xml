@@ -9,15 +9,28 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<maven.compiler.target>1.8</maven.compiler.target>
+      	<maven.compiler.source>1.8</maven.compiler.source>
+		<java.version>1.8</java.version>
 		<spring.version>5.0.0.RELEASE</spring.version>
 		<lombok.version>1.16.18</lombok.version>
 		<mysql.jdbc.driver.version>5.1.44</mysql.jdbc.driver.version>
 		<hikari.version>2.7.2</hikari.version>
-		<junit.version>4.12</junit.version>
 		<h2.version>1.4.196</h2.version>
 		<assertj.version>3.8.0</assertj.version>
 		<apache.commons.version>3.6</apache.commons.version>
-		<hibernate.validator.version>6.0.2.Final</hibernate.validator.version>	
+		<hibernate.validator.version>6.0.2.Final</hibernate.validator.version>
+		<reactor.netty.version>0.7.0.RELEASE</reactor.netty.version>
+		<jackson.version>2.9.2</jackson.version>
+		
+		<junit.version>4.12</junit.version>
+		<junit.jupiter.version>5.0.1</junit.jupiter.version>
+		<junit.vintage.version>${junit.version}.1</junit.vintage.version>
+		<junit.platform.version>1.0.1</junit.platform.version>	
+		<jayway.jsonpath.verion>2.3.0</jayway.jsonpath.verion>
+		
+		<slf4j.version>1.7.25</slf4j.version>
+		<logback.version>1.2.3</logback.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -40,6 +53,35 @@
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-context</artifactId>
 		    <version>${spring.version}</version>
+		</dependency>		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-webflux</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-webmvc</artifactId>
+		    <version>${spring.version}</version>
+		</dependency>
+		 <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        
+		<dependency>
+		    <groupId>io.projectreactor.ipc</groupId>
+		    <artifactId>reactor-netty</artifactId>
+		    <version>${reactor.netty.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>${jackson.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -65,6 +107,24 @@
 		    <artifactId>commons-lang3</artifactId>
 		    <version>${apache.commons.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${logback.version}</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -81,12 +141,6 @@
 		    <scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>junit</groupId>
-		    <artifactId>junit</artifactId>
-		    <version>${junit.version}</version>
-		    <scope>test</scope>
-		</dependency>
-		<dependency>
 		    <groupId>com.h2database</groupId>
 		    <artifactId>h2</artifactId>
 		    <version>${h2.version}</version>
@@ -98,8 +152,71 @@
 			<version>${assertj.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- <dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency> -->
+		<!-- Only required to run tests in an IDE that bundles an older version -->
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-launcher</artifactId>
+			<version>${junit.platform.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-engine</artifactId>
+			<version>${junit.platform.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Only required to run tests in an IDE that bundles an older version -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Only required to run tests in an IDE that bundles an older version -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>${junit.vintage.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.jayway.jsonpath</groupId>
+		    <artifactId>json-path</artifactId>
+		    <version>${jayway.jsonpath.verion}</version>
+		</dependency>
+		
+			
 	</dependencies>
 	<build>
 		<finalName>1_world</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-war</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<failOnMissingWebXml>false</failOnMissingWebXml>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 </project>
