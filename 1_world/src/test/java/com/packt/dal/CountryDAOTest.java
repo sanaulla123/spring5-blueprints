@@ -17,11 +17,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.packt.config.TestDBConfiguration;
 import com.packt.model.Country;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringRunner.class)
 @SpringJUnitConfig( classes = {TestDBConfiguration.class, CountryDAO.class})
 public class CountryDAOTest {
 
@@ -57,13 +58,6 @@ public class CountryDAOTest {
 		assertThat(countries).hasSize(1);
 	}
 	
-	@Test
-	public void testGetCountries_searchByLocalName() {
-		Map<String, Object> params = new HashMap<>();
-		params.put("search", "Bharat/India");
-		List<Country> countries = countryDao.getCountries(params);
-		assertThat(countries).hasSize(1);
-	}
 	
 	@Test
 	public void testGetCountries_searchByContinent() {

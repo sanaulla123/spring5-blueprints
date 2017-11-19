@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.packt.dal.CountryDAO;
+import com.packt.external.WorldBankApiClient;
 import com.packt.model.Country;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CountryAPIController {
 	
 	@Autowired CountryDAO countryDao;
+	@Autowired WorldBankApiClient worldBankApiClient;
 	
 	@GetMapping
 	public ResponseEntity<?> getCountries(
@@ -68,8 +70,19 @@ public class CountryAPIController {
 			//System.out.println(countryFromDb);
 			return new ResponseEntity<>(countryFromDb, HttpStatus.OK);
 		}catch(Exception ex) {
-			log.error("Error while editing the country: {} with data: {}", countryCode, country);
+			log.error("Error while editing the country: {} with data: {}", countryCode, country, ex);
 			return new ResponseEntity<>("Error while ediiting the country", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/{countryCode}/gdp")
+	public ResponseEntity<?> getGDP(@PathVariable String countryCode){
+		try {
+			return ResponseEntity.ok(worldBankApiClient.getGDP(countryCode));
+		}catch(Exception ex) {
+			log.error("Error while getting GDP for country: {}", countryCode, ex);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.body("Error while getting the GDP");
 		}
 	}
 	

@@ -42,9 +42,7 @@ public class CountryDAO {
 			+ " LEFT OUTER JOIN city cy ON cy.id = c.capital ";
 	
 	private static final String SEARCH_WHERE_CLAUSE = " AND ( LOWER(c.name) "
-			+ "	LIKE '%'||LOWER(:search)||'%' "
-			+ "	OR LOWER(c.localname) "
-			+ "	LIKE  '%'||LOWER(:search)||'%' )";
+			+ "	LIKE CONCAT('%', LOWER(:search), '%') ) ";
 	
 	private static final String CONTINENT_WHERE_CLAUSE = 
 			" AND c.continent = :continent ";
@@ -60,6 +58,14 @@ public class CountryDAO {
 		Integer offset = (pageNo - 1) * PAGE_SIZE;
 		params.put("offset", offset);
 		params.put("size", PAGE_SIZE);
+		log.debug("Params: {}", params.toString());
+		log.debug(SELECT_CLAUSE
+				+ " WHERE 1 = 1 "
+				+ (StringUtils.isNotEmpty((String)params.get("search")) ? SEARCH_WHERE_CLAUSE : "")
+				+ (StringUtils.isNotEmpty((String)params.get("continent")) ? CONTINENT_WHERE_CLAUSE : "")
+				+ (StringUtils.isNotEmpty((String)params.get("region")) ? REGION_WHERE_CLAUSE : "")
+				+ " ORDER BY c.code "
+				+ " LIMIT :size OFFSET :offset ");
 		return namedParamJdbcTemplate.query(SELECT_CLAUSE
 				+ " WHERE 1 = 1 "
 				+ (StringUtils.isNotEmpty((String)params.get("search")) ? SEARCH_WHERE_CLAUSE : "")

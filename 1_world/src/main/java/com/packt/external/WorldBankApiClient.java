@@ -29,10 +29,10 @@ public class WorldBankApiClient {
 		List<CountryGDP> data = new ArrayList<>();
 		for ( Object gdpObject : dataList ) {
 			Map<String, Object> gdpMap = (Map<String, Object>)gdpObject;
-			String valueStr = gdpMap.get("value").toString();
+			String valueStr = (String)gdpMap.get("value");
 			String yearStr = gdpMap.get("date").toString();
 			CountryGDP gdp = new CountryGDP();
-			gdp.setValue(Double.valueOf(valueStr));
+			gdp.setValue(valueStr != null ? Double.valueOf(valueStr) : null);
 			gdp.setYear(Short.valueOf(yearStr));
 			data.add(gdp);
 		}

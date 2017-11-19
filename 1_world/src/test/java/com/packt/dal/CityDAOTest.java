@@ -1,9 +1,11 @@
 package com.packt.dal;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.packt.config.TestDBConfiguration;
 import com.packt.model.City;
-import static org.assertj.core.api.Assertions.*;
+
 @RunWith(SpringRunner.class)
 @SpringJUnitConfig( classes = {TestDBConfiguration.class, CityDAO.class})
 public class CityDAOTest {
@@ -50,11 +52,12 @@ public class CityDAOTest {
 		assertThat(cityFromDb.getName()).isEqualTo("City Name");
 	}
 	
-	@Test(expected = EmptyResultDataAccessException.class) 
+	@Test (expected = EmptyResultDataAccessException.class)
 	public void testDeleteCity() {
 		Long cityId = addCity();
 		cityDao.deleteCity(cityId);
 		City cityFromDb = cityDao.getCityDetail(cityId);
+		//assertThrows(EmptyResultDataAccessException.class, ()-> {});
 		assertThat(cityFromDb).isNull();
 	}
 	

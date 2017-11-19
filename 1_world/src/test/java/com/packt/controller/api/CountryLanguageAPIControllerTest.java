@@ -29,20 +29,22 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.packt.AppConfiguration;
 import com.packt.dal.CityDAO;
+import com.packt.dal.CountryLanguageDAO;
 import com.packt.model.City;
+import com.packt.model.CountryLanguage;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringJUnitWebConfig(classes = {AppConfiguration.class})
-public class CityAPIControllerTest {
+public class CountryLanguageAPIControllerTest {
 	
     @Autowired
     private WebApplicationContext wac;
     private MockMvc mockMvc;
 
-    @Autowired CityDAO cityDao;
+    @Autowired CountryLanguageDAO cLanguageDao;
     
     @Autowired @Qualifier("testTemplate")
 	NamedParameterJdbcTemplate namedParamJdbcTemplate;
@@ -50,61 +52,86 @@ public class CityAPIControllerTest {
     @Before
     public void setup() {
     	this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
-    	cityDao.setNamedParamJdbcTemplate(namedParamJdbcTemplate);
+    	cLanguageDao.setNamedParamJdbcTemplate(namedParamJdbcTemplate);
     }
 	
 	@Test
-	public void testGetCities() throws Exception {
+	public void testGetLanguages() throws Exception {
 		String countryCode = "IND";
-		this.mockMvc.perform(get("/api/cities/{countryCode}", countryCode)
+		this.mockMvc.perform(get("/api/languages/{countryCode}", countryCode)
 				.accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json;charset=UTF-8"))
 				.andExpect(jsonPath("$").isArray())
 				.andExpect(jsonPath("$.length()", is(10)))
-				.andExpect(jsonPath("$[0].name", is("Mumbai (Bombay)")));
+				.andExpect(jsonPath("$[0].language", is("Hindi")));
 	}
 	
 	@Test
-	public void testAddCity() throws Exception{
+	public void testAddLanguage() throws Exception{
 		String countryCode = "IND";
-		City city = new City();
-		city.setCountryCode(countryCode);
-		city.setDistrict("Karnataka");
-		city.setName("Large State");
-		city.setPopulation(10500000L + 100);
+		
+		CountryLanguage cl = new CountryLanguage();
+		cl.setCountryCode(countryCode);
+		cl.setIsOfficial("T");
+		cl.setLanguage("TEST");
+		cl.setPercentage(100d);
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		MvcResult result = this.mockMvc.perform(
-				post("/api/cities/{countryCode}",countryCode)
+				post("/api/languages/{countryCode}",countryCode)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(city))
-			).andExpect(status().isCreated())
+				.content(objectMapper.writeValueAsString(cl))
+			).andExpect(status().isOk())
 			.andReturn();
 		
-		List<City> cities = cityDao.getCities(countryCode, 1);
-		City first = cities.get(0);
-		assertThat(first.getName()).isEqualTo("Large State");
-		cityDao.deleteCity(first.getId());
+		List<CountryLanguage> langs = cLanguageDao.getLanguages(countryCode, 1);
+		CountryLanguage first = langs.get(0);
+		assertThat(first.getLanguage()).isEqualTo("TEST");
+		cLanguageDao.deleteLanguage(countryCode, first.getLanguage());
+	}
+	
+	@Test
+	public void testAddLanguage_DuplicateLang() throws Exception{
+		String countryCode = "IND";
+		
+		CountryLanguage cl = new CountryLanguage();
+		cl.setCountryCode(countryCode);
+		cl.setIsOfficial("T");
+		cl.setLanguage("TEST");
+		cl.setPercentage(100d);
+		
+		cLanguageDao.addLanguage(countryCode, cl);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		MvcResult result = this.mockMvc.perform(
+				post("/api/languages/{countryCode}",countryCode)
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(cl))
+			).andExpect(status().isBadRequest())
+			.andReturn();
+		
+		cLanguageDao.deleteLanguage(countryCode, cl.getLanguage());
 	}
 	
 	@Test
 	public void testDeleteCity() throws Exception {
 		String countryCode = "IND";
-		City city = new City();
-		city.setCountryCode(countryCode);
-		city.setDistrict("Karnataka");
-		city.setName("Large State");
-		city.setPopulation(10500000L + 100);
+		CountryLanguage cl = new CountryLanguage();
+		cl.setCountryCode(countryCode);
+		cl.setIsOfficial("T");
+		cl.setLanguage("TEST");
+		cl.setPercentage(100d);
 		
-		Long cityId = cityDao.addCity(countryCode, city);
+		cLanguageDao.addLanguage(countryCode, cl);
 		this.mockMvc.perform(
-				delete("/api/cities/{cityId}", cityId)
+				delete("/api/languages/{countryCode}/language/{language}",
+					countryCode, cl.getLanguage())
 			).andDo(MockMvcResultHandlers.print())
 		.andExpect(status().isOk());
 		
-		List<City> cities = cityDao.getCities(countryCode, 1);
-		City first = cities.get(0);
-		assertThat(first.getName()).isEqualTo("Mumbai (Bombay)");
+		List<CountryLanguage> langs = cLanguageDao.getLanguages(countryCode, 1);
+		CountryLanguage first = langs.get(0);
+		assertThat(first.getLanguage()).isEqualTo("Hindi");
 	}
 }

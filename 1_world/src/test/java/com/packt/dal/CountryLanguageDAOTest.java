@@ -31,37 +31,47 @@ public class CountryLanguageDAOTest {
 	}
 	
 	@Test public void testGetLanguages() {
-		List<CountryLanguage> languages = countryLangDao.getLanguages("IND");
-		assertThat(languages).hasSize(12);
+		List<CountryLanguage> languages = countryLangDao.getLanguages("IND", 1);
+		assertThat(languages).hasSize(10);
 	}
 	
 	@Test public void testAddLanguage() {
 		String countryCode = "IND";
-		CountryLanguage cl = new CountryLanguage();
-		cl.setCountryCode(countryCode);
-		cl.setIsOfficial("T");
-		cl.setLanguage("Test");
-		cl.setPercentage(12.3);
+		CountryLanguage cl = createNewLanguage(countryCode);
 		countryLangDao.addLanguage(countryCode, cl);
-		List<CountryLanguage> languages = countryLangDao.getLanguages(countryCode);
-		assertThat(languages).hasSize(13);
+		List<CountryLanguage> languages = countryLangDao.getLanguages(countryCode, 2);
+		assertThat(languages).hasSize(3);
+	}
+	
+	@Test public void testLanguageExists() {
+		String countryCode = "IND";
+		CountryLanguage cl = createNewLanguage(countryCode);
+		countryLangDao.addLanguage(countryCode, cl);
+		
+		assertThat(countryLangDao.languageExists(
+				countryCode, cl.getLanguage())).isTrue();
+		countryLangDao.deleteLanguage(countryCode, cl.getLanguage());
 	}
 	
 	@Test public void testDeleteLanguage() {
 		String countryCode = "IND";
+		CountryLanguage cl = createNewLanguage(countryCode);
+		countryLangDao.addLanguage(countryCode, cl);
+		List<CountryLanguage> languages = countryLangDao.getLanguages(countryCode, 2);
+		assertThat(languages).hasSize(3);
 		
+		countryLangDao.deleteLanguage(countryCode, "Test");
+		languages = countryLangDao.getLanguages(countryCode, 2);
+		assertThat(languages).hasSize(2);
+			
+	}
+	
+	private CountryLanguage createNewLanguage(String countryCode) {
 		CountryLanguage cl = new CountryLanguage();
 		cl.setCountryCode(countryCode);
 		cl.setIsOfficial("T");
 		cl.setLanguage("Test");
 		cl.setPercentage(12.3);
-		countryLangDao.addLanguage(countryCode, cl);
-		List<CountryLanguage> languages = countryLangDao.getLanguages(countryCode);
-		assertThat(languages).hasSize(13);
-		
-		countryLangDao.deleteLanguage(countryCode, "Test");
-		languages = countryLangDao.getLanguages(countryCode);
-		assertThat(languages).hasSize(12);
-			
+		return cl;
 	}
 }
