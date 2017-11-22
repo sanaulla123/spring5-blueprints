@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -18,7 +20,7 @@ public class DBConfiguration {
 	@Value("${dataSource.password}") String password;
 	@Value("${dataSourceClassName}") String className;
 	
-	@Bean
+	/*@Bean
 	public DataSource getDataSource() {
 		HikariDataSource ds = new HikariDataSource();
 		ds.setJdbcUrl(jdbcUrl);
@@ -26,7 +28,17 @@ public class DBConfiguration {
 		ds.setPassword(password);
 		ds.setDriverClassName(className);
 		return ds;
-	}
+	}*/
+	@Bean
+    public DataSource getDataSource() {
+        return new EmbeddedDatabaseBuilder()
+            .generateUniqueName(true)
+            .setType(EmbeddedDatabaseType.H2)
+            .setScriptEncoding("UTF-8")
+            .ignoreFailedDrops(true)
+            .addScript("world.sql")
+            .build();
+    }
 	
 	@Bean
 	public NamedParameterJdbcTemplate namedParamJdbcTemplate() {

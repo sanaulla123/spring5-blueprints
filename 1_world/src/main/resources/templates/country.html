@@ -78,10 +78,23 @@
 	<div class="row">
 	
 		<div class="col-md-3">
-			<h2>Cities</h2>
+			<h2>Cities
+				<span class="pull-right">
+					<a href="javascript:void(0);" id="new-city"
+					 title="Add New City"><i class="fa fa-plus"></i></a>
+				</span></h2>
+			<ul class="list-group" id="cities"></ul>
 		</div>
 		<div class="col-md-3">
-			<h2>Languages</h2>
+			<h2>Languages
+				<span class="pull-right">
+					<a href="javascript:void(0);" id="new-language"
+					 title="Add New Language"><i class="fa fa-plus"></i></a>
+				</span>
+			</h2>
+			<ul class="list-group" id="languages">
+			
+			</ul>
 		</div>
 		<div class="col-md-6">
 			<h2>GDP</h2>
@@ -96,5 +109,140 @@
 		var code = [[${c.code}]];
 	</script>
 	<script th:src="@{/static/js/country.js}"></script>
+	
+	<script type="text/html" id="cities-list-template">
+		{{#list}}
+		<li>
+			{{name}}<br/>
+			<small class="grey">{{district}}</small>
+			<span class="pull-right">
+				<span class="badge badge-primary">{{population}}</span>
+				<a href="javascript:void(0);" class="btn btn-danger btn-minier delete-country" title="Delete Country">
+					<i class="fa fa-times"></i>
+				</a>
+			</span>
+		</li>
+		{{/list}}
+		{{#more}}
+		<button class="btn btn-sm btn-primary btn-block" onclick="getCities({{pageNo}})">Load More</button>
+		{{/more}}
+	</script>
+	<script type="text/html" id="languages-list-template">
+		{{#list}}
+		<li>
+			{{language}}
+			{{#isOfficial_Bool}}
+			<i class="fa fa-certificate" title="Official Language"></i>
+			{{/isOfficial_Bool}}
+			<span class="pull-right">
+				<span class="badge badge-primary">{{percentage_fmt}}%</span>
+				<a href="javascript:void(0);" class="delete-country" title="Delete Country">
+					<i class="fa fa-times"></i>
+				</a>
+			</span>
+		</li>
+		{{/list}}
+		{{#more}}
+		<button class="btn btn-sm btn-primary btn-block" onclick="getCities({{pageNo}})">Load More</button>
+		{{/more}}
+	</script>
+
+	<script type="text/html" id="city-form-template">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">City</h4>
+				</div>
+				<div class="modal-body">
+					<form id="city-form" method="POST"  
+						class="form-horizontal"
+						th:action="@{|/api/cities/${c.code}|}" >
+						<input type="hidden" th:value="${c.code}" id="countryCode" name="countryCode" />
+						<div class="row">
+							<div class="col-md-12">
+								<label class="required" for="name">Name</label>
+								<input type="text" name="name" id="name" value="{{name}}" 
+									class="form-control required" />
+							</div>
+						</div>
+						<br/>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="required" for="district">District</label>
+								<input type="text" name="district" id="district" value="{{district}}" 
+									class="form-control required" />
+							</div>
+						</div>
+						<br/>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="required" for="population">Population</label>
+								<input type="text" name="population" id="population" value="{{population}}" 
+									class="form-control required numeric" />
+							</div>
+						</div>
+						<div class="modal-form-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary pull-right">Save</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</script>
+	<script type="text/html" id="language-form-template">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">Language</h4>
+				</div>
+				<div class="modal-body">
+					<form id="city-form" method="POST"  
+						class="form-horizontal"
+						th:action="@{|/api/languages/${c.code}|}" >
+						<input type="hidden" th:value="${c.code}" id="countryCode" name="countryCode" />
+						<div class="row">
+							<div class="col-md-12">
+								<label class="required" for="language">Language</label>
+								<input type="text" name=language" id=language" value="{{language}}" 
+									class="form-control required" />
+							</div>
+						</div>
+						<br/>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="form-check-label">
+                      				<input type="checkbox" class="form-check-input" id="isOfficial"
+										name="isOfficial" value="0"/>
+                      					Is Official
+                    			</label>
+							</div>
+						</div>
+						<br/>
+						<div class="row">
+							<div class="col-md-12">
+								<label class="required" for="percentage">Percentage</label>
+								<input type="text" name="percentage" id="percentage" value="{{percentage}}" 
+									class="form-control required numeric" />
+							</div>
+						</div>
+						<div class="modal-form-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary pull-right">Save</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+	</script>
 </th:block>
 </html>

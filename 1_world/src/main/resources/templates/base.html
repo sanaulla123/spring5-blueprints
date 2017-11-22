@@ -15,6 +15,7 @@
         	href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
         <link rel="stylesheet" type="text/css"
         	href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.9.0/css/flag-icon.min.css" />
+        <link rel="stylesheet" type="text/css" th:href="@{/static/css/style.css}" />
         <script src="https://use.fontawesome.com/e344ad35b2.js"></script>
         
 	</head>
@@ -40,6 +41,9 @@
 			</div>
 	
 		</div>
+		<div class="modal fade" id="modal" role="dialog" aria-labelledby="myModalLabel">
+  			
+		</div>
 		<!-- /.container -->
 		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -57,6 +61,27 @@
         	$(function(){
 				google.charts.load('current', { packages: ['corechart'] });
 			});
+        	function loadModal(template, data){
+        		var html = Mustache.to_html($("#"+template).html(), data);
+        		$("#modal").html(html).modal('show');
+        	}
+
+        	function dismissModal(){
+        		$("#modal").html('').modal('hide');
+        	}
+
+        	function success(message){
+        		toastr.success(message);
+        	}
+
+        	function error(message){
+        		toastr.error(message);
+        	}
+
+        	function warning(message){
+        		toastr.warning(message);
+        	}
+        	
 	        var queryString = (function(a) {
 	            if (a == "") return {};
 	            var b = {};
