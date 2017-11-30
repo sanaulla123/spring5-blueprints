@@ -17,7 +17,9 @@
 		[[|${c.name}(${c.code} / ${c.code2})|]]
 		
 		<span class="pull-right">
-			<button class="btn btn-sm btn-success"><i class="fa fa-pencil"></i> Edit</button>
+			<a class="btn btn-sm btn-success" th:href="@{|/countries/${c.code}/form|}">
+				<i class="fa fa-pencil"></i> Edit
+			</a>
 		</span>
 	</h1>
 	<div class="row">
@@ -80,25 +82,35 @@
 		<div class="col-md-3">
 			<h2>Cities
 				<span class="pull-right">
-					<a href="javascript:void(0);" id="new-city"
-					 title="Add New City"><i class="fa fa-plus"></i></a>
+					<button id="new-city" class="btn btn-sm btn-success"
+					
+					 title="Add New City"><i class="fa fa-plus"></i> New </button>
 				</span></h2>
-			<ul class="list-group" id="cities"></ul>
+			<ul class="list-group" id="cities">
+				<li class="list-group-item alert alert-info">
+					<i class="fa fa-spinner fa-spin"></i> Loading cities...
+				</li>
+			</ul>
 		</div>
 		<div class="col-md-3">
 			<h2>Languages
 				<span class="pull-right">
-					<a href="javascript:void(0);" id="new-language"
-					 title="Add New Language"><i class="fa fa-plus"></i></a>
+					<button id="new-language" class="btn btn-sm btn-success"
+					 title="Add New Language"><i class="fa fa-plus"></i> New</button>
 				</span>
 			</h2>
 			<ul class="list-group" id="languages">
-			
+				<li class="list-group-item alert alert-info">
+					<i class="fa fa-spinner fa-spin"></i> Loading languages...
+				</li>
 			</ul>
 		</div>
 		<div class="col-md-6">
 			<h2>GDP</h2>
 			<div id="gdp-chart" style="height: 480px;">
+				<div class="alert alert-info">
+					<i class="fa fa-spinner fa-spin"></i> Loading GDP Data...
+				</div>
 			</div>
 		</div>
 	</div>
@@ -112,12 +124,12 @@
 	
 	<script type="text/html" id="cities-list-template">
 		{{#list}}
-		<li>
+		<li class="list-group-item">
 			{{name}}<br/>
 			<small class="grey">{{district}}</small>
 			<span class="pull-right">
 				<span class="badge badge-primary">{{population}}</span>
-				<a href="javascript:void(0);" class="btn btn-danger btn-minier delete-country" title="Delete Country">
+				<a href="javascript:void(0);" class="delete-country text-danger" title="Delete City">
 					<i class="fa fa-times"></i>
 				</a>
 			</span>
@@ -129,21 +141,21 @@
 	</script>
 	<script type="text/html" id="languages-list-template">
 		{{#list}}
-		<li>
+		<li class="list-group-item">
 			{{language}}
 			{{#isOfficial_Bool}}
-			<i class="fa fa-certificate" title="Official Language"></i>
+			<i class="fa fa-certificate" style="color: green;" title="Official Language"></i>
 			{{/isOfficial_Bool}}
 			<span class="pull-right">
 				<span class="badge badge-primary">{{percentage_fmt}}%</span>
-				<a href="javascript:void(0);" class="delete-country" title="Delete Country">
+				<a href="javascript:void(0);" class="delete-country text-danger" title="Delete Language">
 					<i class="fa fa-times"></i>
 				</a>
 			</span>
 		</li>
 		{{/list}}
 		{{#more}}
-		<button class="btn btn-sm btn-primary btn-block" onclick="getCities({{pageNo}})">Load More</button>
+		<button class="btn btn-sm btn-primary btn-block" onclick="getLanguages({{pageNo}})">Load More</button>
 		{{/more}}
 	</script>
 
@@ -151,11 +163,11 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
+					<h5 class="modal-title" id="myModalLabel">City</h5>
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="myModalLabel">City</h4>
 				</div>
 				<div class="modal-body">
 					<form id="city-form" method="POST"  
@@ -198,11 +210,11 @@
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
+					<h5 class="modal-title" id="myModalLabel">Language</h5>
 					<button type="button" class="close" data-dismiss="modal"
 						aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="myModalLabel">Language</h4>
 				</div>
 				<div class="modal-body">
 					<form id="city-form" method="POST"  

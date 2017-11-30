@@ -26,4 +26,20 @@ public class LookupDAO {
 				+ " ORDER BY region", 
 				params, String.class);
 	}
+	
+	public List<String> getHeadOfStates(){
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		return namedParamJdbcTemplate.queryForList("SELECT DISTINCT headofstate FROM country "
+				+ " ORDER BY headofstate", 
+				params, String.class);
+	}
+	
+	public List<String> getGovernmentTypes(){
+		MapSqlParameterSource params = new MapSqlParameterSource();
+		return namedParamJdbcTemplate.queryForList("SELECT DISTINCT governmentform FROM country "
+				+ " ORDER BY governmentform", 
+				params, String.class);
+	}
+	
+	
 }

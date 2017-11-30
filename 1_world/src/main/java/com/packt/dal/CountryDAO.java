@@ -53,7 +53,7 @@ public class CountryDAO {
 	public List<Country> getCountries(Map<String, Object> params){
 		int pageNo = 1;
 		if ( params.containsKey("pageNo") ) {
-			pageNo = (Integer)params.get("pageNo");
+			pageNo = Integer.parseInt(params.get("pageNo").toString());
 		}
 		Integer offset = (pageNo - 1) * PAGE_SIZE;
 		params.put("offset", offset);

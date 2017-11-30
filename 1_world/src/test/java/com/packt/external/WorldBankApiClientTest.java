@@ -18,10 +18,10 @@ public class WorldBankApiClientTest {
 	
 	@Test public void testGetGDP() {
 		List<CountryGDP> gdpData = worldBankClient.getGDP("IN");
-		assertThat(gdpData).hasSize(10);
+		assertThat(gdpData).hasSize(11);
 		CountryGDP gdp = gdpData.get(0);
-		assertThat(gdp.getYear()).isEqualTo(Short.valueOf("2016"));
-		gdp = gdpData.get(9);
+		assertThat(gdp.getYear()).isEqualTo(Short.valueOf("2017"));
+		gdp = gdpData.get(10);
 		assertThat(gdp.getYear()).isEqualTo(Short.valueOf("2007"));
 	}
 }

@@ -10,8 +10,8 @@
 	<h1 class="page-header">Countries</h1>
 	<div class="row justify-content-md-center">
 		<div class="col-md-6 input-group">
-			<input type="text" class="filter form-control" id="search_f" 
-				name="search" placeholder="Search by name" />
+			<input type="text" class="filter form-control" id="search_f"
+				th:value="${param.search}" name="search" placeholder="Search by name" />
 			<button id="searchBtn" class="btn btn-primary btn-sm">
 				<i class="fa fa-search"></i> Search</button>
 		</div>
@@ -30,15 +30,16 @@
 							<select class="form-control filter" id="continents_f" name="continent">
 							
 								<option value="">All</option>
-								<option th:each="c : ${continents}" th:value="${c}">[[${c}]]</option>
+								<option th:each="c : ${continents}" th:value="${c}"
+									th:selected="${#strings.equals(c, param.continent)}">[[${c}]]</option>
 							</select>
 						</th>
 						<th>
+
 							<select class="form-control filter" id="regions_f" name="region">
-							
-							
 								<option value="">All</option>
-								<option th:each="r : ${regions}" th:value="${r}">[[${r}]]</option>
+								<option th:each="r : ${regions}" th:value="${r}"
+									th:selected="${#strings.equals(r, param.region)}">[[${r}]]</option>
 							</select>
 						</th>
 					</tr>

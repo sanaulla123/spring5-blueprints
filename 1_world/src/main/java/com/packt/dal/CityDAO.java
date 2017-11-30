@@ -26,19 +26,24 @@ public class CityDAO {
 	@Autowired NamedParameterJdbcTemplate namedParamJdbcTemplate;
 	private static final Integer PAGE_SIZE = 10;
 	
+	public List<City> getCities(String countryCode){
+		return getCities(countryCode, null);
+	}
+	
 	public List<City> getCities(String countryCode, Integer pageNo){
 		Map<String, Object> params = new HashMap<>();
 		params.put("code", countryCode);
-		
-		Integer offset = (pageNo - 1) * PAGE_SIZE;
-		params.put("offset", offset);
-		params.put("size", PAGE_SIZE);
+		if ( pageNo != null ) {
+			Integer offset = (pageNo - 1) * PAGE_SIZE;
+			params.put("offset", offset);
+			params.put("size", PAGE_SIZE);
+		}
 		
 		return namedParamJdbcTemplate.query("SELECT "
 				+ " id, name, countrycode country_code, district, population "
 				+ " FROM city WHERE countrycode = :code"
 				+ " ORDER BY Population DESC"
-				+ " LIMIT :size OFFSET :offset ", 
+				+ ((pageNo != null) ? " LIMIT :size OFFSET :offset " : ""),
 				params, new CityRowMapper());
 	}
 	

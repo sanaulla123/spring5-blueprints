@@ -1,30 +1,42 @@
 var pageSize = 10;
 $(function(){
-	google.charts.setOnLoadCallback(function(){
-		getGDP();
-	});
+	getGDP();
+	
 	
 	$("#new-city").on('click', function(){
-		loadModal("city-form-template", {});
-		setupForm('city-form', function(){
-			success("City Added Successfully");
-		});
+		
+		loadNewCityModal();
 	});
 	
 	$("#new-language").on('click', function(){
-		loadModal("language-form-template", {});
-		setupForm('language-form', function(){
-			success("Language Added Successfully");
-		});
-		$("#isOfficial").on('change', function(){
-			if ( $(this).is(":checked")) $(this).val(1);
-			if ( !$(this).is(":checked")) $(this).val(0);
-		});
+		loadNewLanguageModal();
 	});
 	
 	getCities(1);
 	getLanguages(1);
 });
+
+function loadNewCityModal(){
+	loadModal("city-form-template", {});
+	/*var html = Mustache.to_html($("#city-form-template").html(), {});
+	$("#worldModal").html(html);*/
+	setupForm('city-form', function(){
+		success("City Added Successfully");
+	});
+}
+
+function loadNewLanguageModal(){
+	loadModal("language-form-template", {});
+	/*var html = Mustache.to_html($("#language-form-template").html(), {});
+	$("#worldModal").html(html);*/
+	setupForm('language-form', function(){
+		success("Language Added Successfully");
+	});
+	$("#isOfficial").on('change', function(){
+		if ( $(this).is(":checked")) $(this).val(1);
+		if ( !$(this).is(":checked")) $(this).val(0);
+	});
+}
 
 function getCities(pageNo){
 	var params = {"pageNo" : pageNo};
@@ -42,7 +54,7 @@ function getCities(pageNo){
 			$("#cities").html(html);
 		}else{
 			$("#cities button").remove();
-			$("cities").append(html);
+			$("#cities").append(html);
 		}
 	});
 }
@@ -72,7 +84,7 @@ function getLanguages(pageNo){
 			$("#languages").html(html);
 		}else{
 			$("#languages button").remove();
-			$("languages").append(html);
+			$("#languages").append(html);
 		}
 	});
 }
@@ -100,9 +112,13 @@ function getGDP(){
 			}
 	      };
 
-		var chart = new google.visualization.LineChart(document.getElementById('gdp-chart'));
-
-		chart.draw(dataTable, options);
+		
+		$("#gdp-chart").html('');
+		google.charts.setOnLoadCallback(function(){
+			var chart = new google.visualization.LineChart(document.getElementById('gdp-chart'));
+			chart.draw(dataTable, options);
+		});
+		
 	});
 }
 
