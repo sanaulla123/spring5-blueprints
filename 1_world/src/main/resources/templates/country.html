@@ -129,9 +129,9 @@
 			<small class="grey">{{district}}</small>
 			<span class="pull-right">
 				<span class="badge badge-primary">{{population}}</span>
-				<a href="javascript:void(0);" class="delete-country text-danger" title="Delete City">
-					<i class="fa fa-times"></i>
-				</a>
+				<a href="javascript:void(0);" class="delete-city text-danger" title="Delete City"
+					data-id="{{id}}">
+					<i class="fa fa-times"></i></a>
 			</span>
 		</li>
 		{{/list}}
@@ -148,7 +148,8 @@
 			{{/isOfficial_Bool}}
 			<span class="pull-right">
 				<span class="badge badge-primary">{{percentage_fmt}}%</span>
-				<a href="javascript:void(0);" class="delete-country text-danger" title="Delete Language">
+				<a href="javascript:void(0);" class="delete-language text-danger" title="Delete Language"
+					data-code="{{countryCode}}" data-lang="{{language}}">
 					<i class="fa fa-times"></i>
 				</a>
 			</span>
@@ -194,12 +195,12 @@
 							<div class="col-md-12">
 								<label class="required" for="population">Population</label>
 								<input type="text" name="population" id="population" value="{{population}}" 
-									class="form-control required numeric" />
+									class="form-control required number" />
 							</div>
 						</div>
 						<div class="modal-form-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary pull-right">Save</button>
+							<button type="button" class="btn btn-primary pull-right" id="save-btn">Save</button>
 						</div>
 					</form>
 				</div>
@@ -217,14 +218,14 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form id="city-form" method="POST"  
+					<form id="language-form" method="POST"  
 						class="form-horizontal"
 						th:action="@{|/api/languages/${c.code}|}" >
 						<input type="hidden" th:value="${c.code}" id="countryCode" name="countryCode" />
 						<div class="row">
 							<div class="col-md-12">
 								<label class="required" for="language">Language</label>
-								<input type="text" name=language" id=language" value="{{language}}" 
+								<input type="text" name="language" id="language" value="{{language}}" 
 									class="form-control required" />
 							</div>
 						</div>
@@ -232,6 +233,7 @@
 						<div class="row">
 							<div class="col-md-12">
 								<label class="form-check-label">
+									<input type="hidden" name="isOfficial" value="0" />
                       				<input type="checkbox" class="form-check-input" id="isOfficial"
 										name="isOfficial" value="0"/>
                       					Is Official
@@ -243,12 +245,12 @@
 							<div class="col-md-12">
 								<label class="required" for="percentage">Percentage</label>
 								<input type="text" name="percentage" id="percentage" value="{{percentage}}" 
-									class="form-control required numeric" />
+									class="form-control required number" />
 							</div>
 						</div>
 						<div class="modal-form-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-							<button type="submit" class="btn btn-primary pull-right">Save</button>
+							<button type="button" class="btn btn-primary pull-right" id="save-btn">Save</button>
 						</div>
 					</form>
 				</div>

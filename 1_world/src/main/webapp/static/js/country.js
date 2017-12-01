@@ -2,7 +2,6 @@ var pageSize = 10;
 $(function(){
 	getGDP();
 	
-	
 	$("#new-city").on('click', function(){
 		
 		loadNewCityModal();
@@ -12,6 +11,42 @@ $(function(){
 		loadNewLanguageModal();
 	});
 	
+	$("#cities").on('click', '.delete-city', function(){
+		var cityId = $(this).data("id");
+		var result = confirm("Do you want to delete the city?");
+		if ( result){
+			$.ajax({
+				method : "DELETE",
+				url: "/world/api/cities/"+cityId,
+				success:function(){
+					success("City deleted successfully");
+					getCities(1);
+				},
+				error: function(response){
+					error("Error occurred while deleting city");
+				}
+			});
+		}
+	});
+	
+	$("#languages").on('click', '.delete-language', function(){
+		var code = $(this).data("code");
+		var lang = $(this).data("lang");
+		var result = confirm("Do you want to delete the language?");
+		if ( result ){
+			$.ajax({
+				method : "DELETE",
+				url: "/world/api/languages/"+code+"/language/"+lang,
+				success:function(){
+					success("Language deleted successfully");
+					getLanguages(1);
+				},
+				error: function(response){
+					error("Error occurred while deleting language");
+				}
+			});
+		}
+	});
 	getCities(1);
 	getLanguages(1);
 });
@@ -22,6 +57,7 @@ function loadNewCityModal(){
 	$("#worldModal").html(html);*/
 	setupForm('city-form', function(){
 		success("City Added Successfully");
+		getCities(1);
 	});
 }
 
@@ -31,6 +67,7 @@ function loadNewLanguageModal(){
 	$("#worldModal").html(html);*/
 	setupForm('language-form', function(){
 		success("Language Added Successfully");
+		getLanguages(1);
 	});
 	$("#isOfficial").on('change', function(){
 		if ( $(this).is(":checked")) $(this).val(1);
@@ -127,37 +164,43 @@ function setupForm(formId, successCallback){
 	$("select").each(function(){
 		$(this).val($(this).attr("value"));
 	});
+	
 	$('#'+formId).validate({
-		ignore: [],
-		errorClass:'text-danger help-inline',
-		validClass:'text-success',
-		errorElement: 'span',
-		highlight: function (element, errorClass, validClass) { 
-		    $(element).parent().addClass('has-error').removeClass('has-success'); 
-		}, 
-		unhighlight: function (element, errorClass, validClass) { 
-			$(element).parent().removeClass('has-error').addClass('has-success'); 
-		}
+		errorClass : "is-invalid",
+		validClass : "is-valid"
 	});
-
-	$("#"+formId).submit(function(){
-		var url = $(this).attr("action");
-		$(this).ajaxSubmit({ 
-			url: url,
-			target:        	'#warning',
-			beforeSubmit: function(){
-				return $('#'+formId).valid();
-			},
-			success: function(data){
-				successCallback(data);
-			},
-			error: function(response){
-				error(response.responseText);
-			},
-			type:      		'POST',
-			dataType:  		'text'
-		});
+	$("#save-btn").on('click', function(){
+		if ( $('#'+formId).valid() ){
+			var requestBody = $('#'+formId).serializeJSON();
+			/*$.each($('#'+formId).serializeArray(), function(){
+				var obj = $(this)[0];
+				if ( obj.name.indexOf(".") >= 0){
+					var nestedObj = obj.name.split(".")[0];
+					var nestedObjProp = obj.name.split(".")[1];
+					if ( !requestBody[nestedObj]){
+						requestBody[nestedObj] = {};
+					}
+					requestBody[nestedObj][nestedObjProp] = obj.value;
+				}else{
+					requestBody[obj.name] = obj.value;
+				}
+				
+			});*/
+			$.ajax({
+				method : "POST",
+				url: $('#'+formId).attr("action"),
+				success: function(data){
+					successCallback(data);
+				},
+				error: function(response){
+					error(response.responseText);
+				},
+				data: JSON.stringify(requestBody),
+				contentType: "application/json"
+			});
+		}
 		return false;
 	});
-	
+
 }
+

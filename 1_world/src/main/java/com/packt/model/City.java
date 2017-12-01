@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class City {
 
-	@NotNull private Long id;
+	private Long id;
 	
 	@NotNull @Size(max = 35) private String name;
 	
