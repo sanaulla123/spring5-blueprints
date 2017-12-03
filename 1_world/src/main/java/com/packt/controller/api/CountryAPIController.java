@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,25 +54,26 @@ public class CountryAPIController {
 			Map<String, Object> response = new HashMap<>();
 			response.put("list", countries);
 			response.put("count", countryDao.getCountriesCount(params));
-			return new ResponseEntity<>(response, HttpStatus.OK);
+			return ResponseEntity.ok(response);
 		}catch(Exception ex) {
 			log.error("Error while getting countries", ex);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error while getting countries");
 		}
 	}
 	
-	@PostMapping("/{countryCode}")
+	@PostMapping(value = "/{countryCode}", 
+			consumes = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<?> editCountry(
 		@PathVariable String countryCode, @Valid @RequestBody Country country ){
 		try {
-			//System.out.println(country);
 			countryDao.editCountryDetail(countryCode, country);
 			Country countryFromDb = countryDao.getCountryDetail(countryCode);
-			//System.out.println(countryFromDb);
-			return new ResponseEntity<>(countryFromDb, HttpStatus.OK);
+			return ResponseEntity.ok(countryFromDb);
 		}catch(Exception ex) {
 			log.error("Error while editing the country: {} with data: {}", countryCode, country, ex);
-			return new ResponseEntity<>("Error while ediiting the country", HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Error while ediiting the country");
 		}
 	}
 	

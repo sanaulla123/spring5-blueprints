@@ -22,12 +22,7 @@ public class ViewController {
 	@Autowired LookupDAO lookupDao;
 	@Autowired CityDAO cityDao;
 	
-	@GetMapping
-	public String index(Model model) {
-		return "index";
-	}
-	
-	@GetMapping("/countries")
+	@GetMapping({"/countries", "/"})
 	public String countries(Model model, 
 		@RequestParam Map<String, Object> params
 	) {

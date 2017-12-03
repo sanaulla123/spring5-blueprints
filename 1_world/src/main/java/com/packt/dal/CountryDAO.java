@@ -48,6 +48,9 @@ public class CountryDAO {
 			" AND c.continent = :continent ";
 	private static final String REGION_WHERE_CLAUSE = 
 			" AND c.region = :region ";
+	private static final String PAGINATION_CLAUSE = " ORDER BY c.code "
+			+ " LIMIT :size OFFSET :offset ";
+	
 	private static final Integer PAGE_SIZE = 20;
 	
 	public List<Country> getCountries(Map<String, Object> params){
@@ -71,19 +74,16 @@ public class CountryDAO {
 				+ (StringUtils.isNotEmpty((String)params.get("search")) ? SEARCH_WHERE_CLAUSE : "")
 				+ (StringUtils.isNotEmpty((String)params.get("continent")) ? CONTINENT_WHERE_CLAUSE : "")
 				+ (StringUtils.isNotEmpty((String)params.get("region")) ? REGION_WHERE_CLAUSE : "")
-				+ " ORDER BY c.code "
-				+ " LIMIT :size OFFSET :offset ",
+				+ PAGINATION_CLAUSE,
 				params, new CountryRowMapper());
 	}
 	
 	public int getCountriesCount(Map<String, Object> params) {
-		return namedParamJdbcTemplate.queryForObject("SELECT COUNT(*) FROM (" 
-				+ SELECT_CLAUSE
+		return namedParamJdbcTemplate.queryForObject("SELECT COUNT(*) FROM country " 
 				+ " WHERE 1 = 1 "
 				+ (StringUtils.isNotEmpty((String)params.get("search")) ? SEARCH_WHERE_CLAUSE : "")
 				+ (StringUtils.isNotEmpty((String)params.get("continent")) ? CONTINENT_WHERE_CLAUSE : "")
-				+ (StringUtils.isNotEmpty((String)params.get("region")) ? REGION_WHERE_CLAUSE : "")
-				+ " ) A",
+				+ (StringUtils.isNotEmpty((String)params.get("region")) ? REGION_WHERE_CLAUSE : ""),
 				params, Integer.class);
 	}
 

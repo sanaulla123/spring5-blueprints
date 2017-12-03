@@ -37,6 +37,13 @@ public class CityDAOTest {
 		assertThat(cities).hasSize(10);
 	}
 	
+	@Test public void testGetCityDetail() {
+		Long cityId = 1024l;
+		City city = cityDao.getCityDetail(cityId);
+		assertThat(city.toString()).isEqualTo("City(id=1024, name=Mumbai (Bombay), "
+			+ "countryCode=IND, country=null, district=Maharashtra, population=10500000)");
+	}
+	
 	@Test public void testAddCity() {
 		String countryCode = "IND";
 		City city = new City();
