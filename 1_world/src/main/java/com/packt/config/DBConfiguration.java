@@ -20,7 +20,7 @@ public class DBConfiguration {
 	@Value("${dataSource.password}") String password;
 	@Value("${dataSourceClassName}") String className;
 	
-	/*@Bean
+	@Bean
 	public DataSource getDataSource() {
 		HikariDataSource ds = new HikariDataSource();
 		ds.setJdbcUrl(jdbcUrl);
@@ -28,9 +28,9 @@ public class DBConfiguration {
 		ds.setPassword(password);
 		ds.setDriverClassName(className);
 		return ds;
-	}*/
+	}
 	
-	@Bean
+	/*@Bean
     public DataSource getDataSource() {
         return new EmbeddedDatabaseBuilder()
             .generateUniqueName(true)
@@ -39,7 +39,7 @@ public class DBConfiguration {
             .ignoreFailedDrops(true)
             .addScript("world.sql")
             .build();
-    }
+    }*/
 	
 	@Bean
 	public NamedParameterJdbcTemplate namedParamJdbcTemplate() {
