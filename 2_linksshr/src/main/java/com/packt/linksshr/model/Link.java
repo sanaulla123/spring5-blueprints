@@ -14,8 +14,13 @@ public class Link {
 	String id;
 	String url;
 	String title;
-	Integer upVoteCount;
-	Integer downVoteCount;
+	Integer upVoteCount = 0;
+	Integer downVoteCount = 0;
+	public Integer getVoteCount() {
+		return upVoteCount - downVoteCount;
+	}
+	
 	String category;
 	List<String> tags = new ArrayList<>();
+	String postedBy;
 }
