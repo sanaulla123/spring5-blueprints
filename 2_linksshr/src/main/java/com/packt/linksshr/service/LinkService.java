@@ -1,5 +1,8 @@
 package com.packt.linksshr.service;
 
+import java.util.Date;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -7,11 +10,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import com.mongodb.QueryBuilder;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import com.mongodb.reactivestreams.client.DistinctPublisher;
 import com.packt.linksshr.model.Link;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -24,11 +28,23 @@ public class LinkService {
 	}
 	
 	public Mono<Link> newLink(Link link) {
+		link.setPostedOn(new Date());
 		return mongoTemplate.insert(link);
 	}
 	
 	public Mono<Link> editLink(Link link) {
+		link.setUpdatedOn(new Date());
 		return mongoTemplate.save(link);
+	}
+	
+	public Flux<Link> getLinks(Map<String, String> params){
+		Query query = new Query();
+		params.entrySet().stream().map(entry -> {
+			return Criteria.where(entry.getKey()).is(entry.getValue());
+		}).forEach(criteria -> {
+			query.addCriteria(criteria);	
+		});
+		return mongoTemplate.find(query, Link.class);
 	}
 	
 	public Mono<Link> getLinkDetail(String id){
@@ -58,5 +74,10 @@ public class LinkService {
 		Update update = new Update();
 		update.inc("downVoteCount", 1);
 		return mongoTemplate.updateFirst(query, update, Link.class);
+	}
+	
+	public DistinctPublisher<String> getUniqueCategories(){
+		return mongoTemplate.getCollection("link")
+				.distinct("category", String.class);
 	}
 }

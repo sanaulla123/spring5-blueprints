@@ -1,9 +1,9 @@
 package com.packt.linksshr.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.Data;
@@ -23,4 +23,6 @@ public class Link {
 	String category;
 	List<String> tags = new ArrayList<>();
 	String postedBy;
+	Date postedOn;
+	Date updatedOn;
 }

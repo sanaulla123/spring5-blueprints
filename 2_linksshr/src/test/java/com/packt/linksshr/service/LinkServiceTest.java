@@ -4,13 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.Map;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,8 @@ import com.mongodb.client.result.DeleteResult;
 import com.packt.linksshr.config.AppConfiguration;
 import com.packt.linksshr.config.TestAppConfiguration;
 import com.packt.linksshr.model.Link;
-import com.packt.linksshr.model.User;
+
+import reactor.core.publisher.Flux;
 
 @RunWith(SpringRunner.class)
 @SpringJUnitConfig(classes = {AppConfiguration.class, TestAppConfiguration.class})
@@ -125,10 +125,50 @@ public class LinkServiceTest {
 		assertThat(linkFromDb).isEqualTo(link);
 	}
 	
+	@Test public void test_getLinks() {
+		Link link = new Link();
+		link.setCategory("java");
+		link.setTitle("Good Java Post");
+		link.setUrl("http://sanaulla.info");
+		linkIds.add(linkService.newLink(link).block().getId());
+		link = new Link();
+		link.setCategory("scala");
+		link.setTitle("Another post");
+		link.setUrl("http://www.google.com");
+		linkIds.add(linkService.newLink(link).block().getId());
+		
+		Map<String, String> params = new HashMap<>();
+		params.put("category", "java");
+		
+		List<Link> links = linkService.getLinks(params).collectList().block();
+		assertThat(links).hasSize(1);
+	}
+	
+	@Test public void test_getUniqueCategories() {
+		Link link = new Link();
+		link.setCategory("java");
+		link.setTitle("Good Java Post");
+		link.setUrl("http://sanaulla.info");
+		linkIds.add(linkService.newLink(link).block().getId());
+		link = new Link();
+		link.setCategory("scala");
+		link.setTitle("Another post");
+		link.setUrl("http://www.google.com");
+		linkIds.add(linkService.newLink(link).block().getId());
+		List<String> categories = Flux.from(linkService.getUniqueCategories())
+				.collectList().block();
+		assertThat(categories).hasSize(2);
+		assertThat(categories).containsSubsequence("java");
+	}
+	
 	@After
 	public void cleanup() {
 		linkIds.forEach(id -> {
 			linkService.deleteLink(id).block();
 		});
 	}
+	
+	
+	
+	
 }
