@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.packt.linksshr.config.AppConfiguration;
+import com.packt.linksshr.AppConfiguration;
 import com.packt.linksshr.config.TestAppConfiguration;
 import com.packt.linksshr.model.User;
 
@@ -46,7 +46,10 @@ public class UserServiceTest {
 		userService.newUser(user).block();
 		usernamesToBeDeleted.add(user.getUsername());
 		User userFromDb = userService.getUserDetail(user.getUsername()).block();
-		assertThat(userFromDb).isEqualTo(user);
+		assertThat(userFromDb.getUsername()).isEqualTo(user.getUsername());
+		assertThat(userFromDb.getEmail()).isEqualTo(user.getEmail());
+		assertThat(userFromDb.getRoles()).hasSize(1);
+		assertThat(userFromDb.getRoles().get(0)).isEqualTo("ROLE_USER");
 	}
 	
 	@Test public void test_userExists() {
@@ -73,9 +76,12 @@ public class UserServiceTest {
 		
 		user.setEmail("user2@gmail.com");
 		user.setName("Second User");
-		userService.editUser(user);
+		userService.editUser(user).block();
 		
 		User userFromDb = userService.getUserDetail(user.getUsername()).block();
-		assertThat(userFromDb).isEqualTo(user);
+		assertThat(userFromDb.getUsername()).isEqualTo(user.getUsername());
+		assertThat(userFromDb.getEmail()).isEqualTo(user.getEmail());
+		assertThat(userFromDb.getName()).isEqualTo(user.getName());
+		assertThat(userFromDb.getRoles()).hasSize(1);
 	}
 }

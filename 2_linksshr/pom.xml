@@ -23,6 +23,7 @@
 
 		<logback.version>1.2.3</logback.version>
 		<lombok.version>1.16.18</lombok.version>
+		<netty.version>4.1.19.Final</netty.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<spring.version>5.0.2.RELEASE</spring.version>
 		<spring-data-mongodb.version>2.0.2.RELEASE</spring-data-mongodb.version>
@@ -51,7 +52,43 @@
 			<artifactId>spring-security-web</artifactId>
 			<version>${spring-security.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>
+	
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-webflux</artifactId>
+			<version>5.0.0.M5</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.thymeleaf</groupId>
+		    <artifactId>thymeleaf-spring5</artifactId>
+		    <version>3.0.9.RELEASE</version>
+		</dependency>
+		<dependency>
+		    <groupId>nz.net.ultraq.thymeleaf</groupId>
+		    <artifactId>thymeleaf-layout-dialect</artifactId>
+		    <version>2.2.2</version>
+		</dependency>
 		
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-all</artifactId>
+			<version>${netty.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.projectreactor.ipc</groupId>
+		    <artifactId>reactor-netty</artifactId>
+		    <version>0.7.2.RELEASE</version>
+		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver</artifactId>
@@ -186,6 +223,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<name>Spring Milestone Repo</name>
+			<id>springio-milestone</id>
+			<url>http://repo.spring.io/milestone/</url>
+		</repository>
+	</repositories>
 	<build>
 		<finalName>2_linksshr</finalName>
 	</build>

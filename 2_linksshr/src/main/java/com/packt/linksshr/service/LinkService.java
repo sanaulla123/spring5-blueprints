@@ -80,4 +80,12 @@ public class LinkService {
 		return mongoTemplate.getCollection("link")
 				.distinct("category", String.class);
 	}
+	
+	public Mono<UpdateResult> incrementView(String id) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(id));
+		Update update = new Update();
+		update.inc("viewCount", 1);
+		return mongoTemplate.updateFirst(query, update, Link.class);
+	}
 }

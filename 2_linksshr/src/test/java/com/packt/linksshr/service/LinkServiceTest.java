@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.mongodb.client.result.DeleteResult;
-import com.packt.linksshr.config.AppConfiguration;
+import com.packt.linksshr.AppConfiguration;
 import com.packt.linksshr.config.TestAppConfiguration;
 import com.packt.linksshr.model.Link;
 
@@ -159,6 +159,21 @@ public class LinkServiceTest {
 				.collectList().block();
 		assertThat(categories).hasSize(2);
 		assertThat(categories).containsSubsequence("java");
+	}
+	
+	@Test public void test_incrementView() {
+		Link link = new Link();
+		link.setCategory("java");
+		link.setTitle("Good Java Post");
+		link.setUrl("http://sanaulla.info");
+		link.setDescription("some description");
+		String linkId = linkService.newLink(link).block().getId();
+		linkIds.add(linkId);
+		linkService.incrementView(linkId).block();
+		linkService.incrementView(linkId).block();
+		
+		Link linkFromDb = linkService.getLinkDetail(linkId).block();
+		assertThat(linkFromDb.getViewCount()).isEqualTo(2);
 	}
 	
 	@After

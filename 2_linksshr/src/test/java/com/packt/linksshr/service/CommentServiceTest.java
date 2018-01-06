@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.packt.linksshr.config.AppConfiguration;
+import com.packt.linksshr.AppConfiguration;
 import com.packt.linksshr.config.TestAppConfiguration;
 import com.packt.linksshr.model.Comment;
 import com.packt.linksshr.model.Link;
@@ -31,6 +31,7 @@ public class CommentServiceTest {
 	@Autowired ReactiveMongoTemplate mongoTemplate;
 	
 	private List<String> commentIds = new ArrayList<>();
+	private List<String> linkIds = new ArrayList<>();
 	
 	@Before
 	public void setup() {
@@ -42,6 +43,9 @@ public class CommentServiceTest {
 	public void cleanup() {
 		commentIds.stream().forEach( id -> {
 			commentService.deleteComment(id).block();
+		});
+		linkIds.stream().forEach( id -> {
+			linkService.deleteLink(id).block();
 		});
 	}
 	
@@ -74,6 +78,7 @@ public class CommentServiceTest {
 		c.setContent("sample content");
 		c.setLinkId(linkId);
 		commentIds.add(commentService.newComment(c).block().getId());
+		linkIds.add(linkId);
 		c = new Comment();
 		c.setContent("sample other content");
 		c.setLinkId(linkId);
@@ -82,6 +87,32 @@ public class CommentServiceTest {
 		List<Comment> commentsForLink = commentService.getComments(linkId)
 				.collectList().block();
 		assertThat(commentsForLink).hasSize(2);
+	}
+	
+	@Test public void test_getReplies() {
+		Link l = new Link();
+		String linkId = linkService.newLink(l).block().getId();
+		Comment c = new Comment();
+		c.setContent("sample content");
+		c.setLinkId(linkId);
+		linkIds.add(linkId);
+		String commentId = commentService.newComment(c).block().getId();
+		commentIds.add(commentId);
+		
+		c = new Comment();
+		c.setContent("sample reply");
+		c.setLinkId(linkId);
+		c.setParentId(commentId);
+		commentIds.add(commentService.newComment(c).block().getId());
+		c = new Comment();
+		c.setContent("sample another reply");
+		c.setLinkId(linkId);
+		c.setParentId(commentId);
+		commentIds.add(commentService.newComment(c).block().getId());
+		
+		
+		List<Comment> replies = commentService.getReplies(commentId).collectList().block();
+		assertThat(replies).hasSize(2);
 	}
 	
 	

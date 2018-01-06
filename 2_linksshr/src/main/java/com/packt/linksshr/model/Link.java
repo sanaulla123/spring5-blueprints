@@ -14,6 +14,8 @@ public class Link {
 	String id;
 	String url;
 	String title;
+	String description;
+	Integer viewCount = 0;
 	Integer upVoteCount = 0;
 	Integer downVoteCount = 0;
 	public Integer getVoteCount() {
