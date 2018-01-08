@@ -2,6 +2,7 @@ package com.packt.linksshr;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,10 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.config.ResourceHandlerRegistry;
+import org.springframework.web.reactive.config.ViewResolverRegistry;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.result.view.ViewResolver;
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine;
 import org.thymeleaf.spring5.view.reactive.ThymeleafReactiveViewResolver;
@@ -22,9 +27,10 @@ import com.mongodb.reactivestreams.client.MongoClients;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 
 @Configuration
+@EnableWebFlux
 @EnableReactiveMongoRepositories
 @ComponentScan(basePackages = "com.packt.linksshr")
-public class AppConfiguration {
+public class AppConfiguration implements WebFluxConfigurer{
 
 	@Bean
 	public MongoClient mongoClient() throws IOException {
@@ -63,5 +69,15 @@ public class AppConfiguration {
 		ThymeleafReactiveViewResolver viewResolver = new ThymeleafReactiveViewResolver();
 		viewResolver.setTemplateEngine(templateEngine());
 		return viewResolver;
+	}
+	
+	
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/static/**")
+			.addResourceLocations("classpath:/static/");
+	}
+	
+	public void configureViewResolvers(ViewResolverRegistry registry) {
+		registry.viewResolver(viewResolver());
 	}
 }

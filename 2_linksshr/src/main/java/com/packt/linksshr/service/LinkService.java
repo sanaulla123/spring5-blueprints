@@ -1,5 +1,6 @@
 package com.packt.linksshr.service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
@@ -28,12 +29,12 @@ public class LinkService {
 	}
 	
 	public Mono<Link> newLink(Link link) {
-		link.setPostedOn(new Date());
+		link.setPostedOn(LocalDateTime.now());
 		return mongoTemplate.insert(link);
 	}
 	
 	public Mono<Link> editLink(Link link) {
-		link.setUpdatedOn(new Date());
+		link.setUpdatedOn(LocalDateTime.now());
 		return mongoTemplate.save(link);
 	}
 	

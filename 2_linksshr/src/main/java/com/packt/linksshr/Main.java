@@ -14,10 +14,10 @@ public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
 		ApplicationContext context = new AnnotationConfigApplicationContext(AppConfiguration.class);  
-		CountDownLatch latch = new CountDownLatch(1);
 		HttpHandler handler = WebHttpHandlerBuilder.applicationContext(context).build();
 		ReactorHttpHandlerAdapter adapter = new ReactorHttpHandlerAdapter(handler);
 		HttpServer.create("localhost", 9090).newHandler(adapter).block();
 		Thread.currentThread().join();
 	}
+	
 }

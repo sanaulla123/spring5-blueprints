@@ -1,5 +1,6 @@
 package com.packt.linksshr.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,6 @@ public class Link {
 	String category;
 	List<String> tags = new ArrayList<>();
 	String postedBy;
-	Date postedOn;
-	Date updatedOn;
+	LocalDateTime postedOn;
+	LocalDateTime updatedOn;
 }
