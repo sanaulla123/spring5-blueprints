@@ -43,21 +43,28 @@
 				<div class="modal-body">
 					<form class="form-horizontal" id="new-link-form">
 						<div class="form-group">
-							<label class="control-label">Title</label>
-							<input type="text" class="form-control" name="title" v-model="newLink.title" />
+							<label class="control-label required">Title</label>
+							<input type="text" class="form-control required" 
+								name="title" v-model="newLink.title" />
 						</div>
 						<div class="form-group">
 							<label class="control-label">URL</label>
-							<input type="url" class="form-control" name="url" v-model="newLink.url" />
+							<input type="url" class="form-control required" 
+								name="url" v-model="newLink.url" />
 						</div>
 						<div class="form-group">
 							<label class="control-label">Description</label>
 							<textarea v-model="newLink.description" class="form-control" name="description"></textarea>
 						</div>
+						<div class="form-group">
+							<label class="control-label">Category</label>
+							<input type="text" class="form-control required"
+								name="category" v-model="newLink.category" />
+						</div>
 						<div class="form-group justify-content-end">
 							<button type="button" class="btn btn-secondary"
 								data-dismiss="modal">Close</button>
-							<button type="button" class="btn btn-primary" id="save-link">Save changes</button>
+							<button type="button" class="btn btn-primary" id="save-link" v-on:click="saveLink">Save changes</button>
 						</div>	
 					</form>
 				</div>
