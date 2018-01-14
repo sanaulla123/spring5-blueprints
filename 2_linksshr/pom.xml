@@ -3,7 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.packt</groupId>
 	<artifactId>2_linksshr</artifactId>
-	<packaging>war</packaging>
 	<version>1.0</version>
 	<name>Link Sharing App</name>
 	<url>http://maven.apache.org</url>
@@ -78,6 +77,11 @@
 		    <artifactId>thymeleaf-layout-dialect</artifactId>
 		    <version>2.2.2</version>
 		</dependency>
+		<dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+            <version>3.0.2.RELEASE</version>
+        </dependency>
 		
 		<dependency>
 			<groupId>io.netty</groupId>
@@ -117,17 +121,7 @@
 			<version>4.0.0</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.thymeleaf</groupId>
-			<artifactId>thymeleaf-spring5</artifactId>
-			<version>${thymeleaf.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>nz.net.ultraq.thymeleaf</groupId>
-			<artifactId>thymeleaf-layout-dialect</artifactId>
-			<version>${thymeleaf-layout-dialect.version}</version>
-		</dependency>
-
+	
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -232,5 +226,20 @@
 	</repositories>
 	<build>
 		<finalName>2_linksshr</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-war</id>
+						<phase>prepare-package</phase>
+						<configuration>
+							<failOnMissingWebXml>false</failOnMissingWebXml>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>
 </project>

@@ -50,10 +50,18 @@ public class CommentServiceTest {
 	}
 	
 	@Test public void test_newComment() {
+		Link l = new Link();
+		String linkId = linkService.newLink(l).block().getId();
+		linkIds.add(linkId);
+		
 		Comment c = new Comment();
+		c.setLinkId(linkId);
 		c.setContent("Sample");
-		String id = commentService.newComment(c).block().getId();
+		commentService.newComment(c).block();
+		String id = c.getId();
 		commentIds.add(id);
+		Link linkFromDb = linkService.getLinkDetail(linkId).block();
+		assertThat(linkFromDb.getRepliesCount()).isEqualTo(1);
 		Comment cFromDb = commentService.getComment(id).block();
 		assertThat(c.getContent()).isEqualTo(cFromDb.getContent());
 	}
@@ -61,7 +69,8 @@ public class CommentServiceTest {
 	@Test public void test_editComment() {
 		Comment c = new Comment();
 		c.setContent("Sample");
-		String id = commentService.newComment(c).block().getId();
+		commentService.newComment(c).block();
+		String id = c.getId();
 		commentIds.add(id);
 		c.setContent("updated sample content");
 		c.setId(id);
@@ -77,12 +86,14 @@ public class CommentServiceTest {
 		Comment c = new Comment();
 		c.setContent("sample content");
 		c.setLinkId(linkId);
-		commentIds.add(commentService.newComment(c).block().getId());
+		commentService.newComment(c).block();
+		commentIds.add(c.getId());
 		linkIds.add(linkId);
 		c = new Comment();
 		c.setContent("sample other content");
 		c.setLinkId(linkId);
-		commentIds.add(commentService.newComment(c).block().getId());
+		commentService.newComment(c).block();
+		commentIds.add(c.getId());
 		
 		List<Comment> commentsForLink = commentService.getComments(linkId)
 				.collectList().block();
@@ -96,19 +107,22 @@ public class CommentServiceTest {
 		c.setContent("sample content");
 		c.setLinkId(linkId);
 		linkIds.add(linkId);
-		String commentId = commentService.newComment(c).block().getId();
+		commentService.newComment(c).block();
+		String commentId = c.getId();
 		commentIds.add(commentId);
 		
 		c = new Comment();
 		c.setContent("sample reply");
 		c.setLinkId(linkId);
 		c.setParentId(commentId);
-		commentIds.add(commentService.newComment(c).block().getId());
+		commentService.newComment(c).block();
+		commentIds.add(c.getId());
 		c = new Comment();
 		c.setContent("sample another reply");
 		c.setLinkId(linkId);
 		c.setParentId(commentId);
-		commentIds.add(commentService.newComment(c).block().getId());
+		commentService.newComment(c).block();
+		commentIds.add(c.getId());
 		
 		
 		List<Comment> replies = commentService.getReplies(commentId).collectList().block();

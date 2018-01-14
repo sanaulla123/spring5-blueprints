@@ -89,4 +89,12 @@ public class LinkService {
 		update.inc("viewCount", 1);
 		return mongoTemplate.updateFirst(query, update, Link.class);
 	}
+	
+	public Mono<UpdateResult> incrementRepliesCount(String id){
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(id));
+		Update update = new Update();
+		update.inc("repliesCount", 1);
+		return mongoTemplate.updateFirst(query, update, Link.class);
+	}
 }

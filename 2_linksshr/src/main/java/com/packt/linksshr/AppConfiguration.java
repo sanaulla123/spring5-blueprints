@@ -16,6 +16,7 @@ import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.ViewResolverRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.result.view.ViewResolver;
+import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 import org.thymeleaf.spring5.SpringWebFluxTemplateEngine;
 import org.thymeleaf.spring5.view.reactive.ThymeleafReactiveViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
@@ -61,6 +62,7 @@ public class AppConfiguration implements WebFluxConfigurer{
 		SpringWebFluxTemplateEngine templateEngine = new SpringWebFluxTemplateEngine();
 		templateEngine.setTemplateResolver(templateResolver());
 		templateEngine.addDialect(new LayoutDialect());
+		//templateEngine.addDialect(new SpringSecurityDialect());
 		return templateEngine;
 	}
 	

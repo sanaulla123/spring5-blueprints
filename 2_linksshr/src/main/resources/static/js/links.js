@@ -5,12 +5,8 @@ $(function(){
 		vueJs.newLink.url = "";
 		vueJs.newLink.description = "";
 		vueJs.newLink.category = "";
-		
 	});
-	$("#new-link-form").validate({
-		errorClass : "is-invalid",
-		validClass : "is-valid"
-	});
+	
 	vueJs = new Vue({
 		"el" : "#page_content",
 		"data": {
@@ -24,9 +20,29 @@ $(function(){
 		"methods":{
 			"saveLink": function(){
 				var formValid = $("#new-link-form").valid();
-				console.log(formValid);
-				console.log(this.newLink);
+				if ( formValid){
+					console.log(this.newLink);
+					$.ajax({
+						type: "POST",
+						url: "/api/links",
+						data: JSON.stringify(this.newLink),
+						contentType: "application/json",
+						success: function(){
+							success("Link created successfully");
+						},
+						error: function(){
+							error("Unable to save the link details");
+						}
+					});
+				}
+				
 			}
+		}, 
+		"mounted": function(){
+			$("#new-link-form").validate({
+				errorClass : "is-invalid",
+				validClass : "is-valid"
+			});
 		}
 	});
 });

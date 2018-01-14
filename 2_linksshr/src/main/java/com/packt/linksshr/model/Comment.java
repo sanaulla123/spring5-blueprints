@@ -1,6 +1,6 @@
 package com.packt.linksshr.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,8 +14,8 @@ public class Comment {
 	private String linkId;
 	private String content;
 	private String postedBy;
-	private Date postedOn;
+	private LocalDateTime postedOn;
 	private String parentId;
-	private Date updatedOn;
+	private LocalDateTime updatedOn;
 	
 }

@@ -1,6 +1,6 @@
 package com.packt.linksshr.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import com.packt.linksshr.model.Comment;
 
 import reactor.core.publisher.Flux;
@@ -18,18 +19,22 @@ import reactor.core.publisher.Mono;
 public class CommentService {
 
 	@Autowired ReactiveMongoTemplate mongoTemplate;
+	@Autowired LinkService linkService;
 	
 	public void setMongoTemplate(ReactiveMongoTemplate mongoTemplate) {
 		this.mongoTemplate = mongoTemplate;
 	}
 	
-	public Mono<Comment> newComment(Comment comment) {
-		comment.setPostedOn(new Date());
-		return mongoTemplate.insert(comment);
+	public Mono<UpdateResult> newComment(Comment comment) {
+		comment.setPostedOn(LocalDateTime.now());
+		return mongoTemplate.insert(comment).flatMap( c -> {
+			comment.setId(c.getId());
+			return linkService.incrementRepliesCount(c.getLinkId());
+		});
 	}
 	
 	public Mono<Comment> editComment(Comment comment){
-		comment.setUpdatedOn(new Date());
+		comment.setUpdatedOn(LocalDateTime.now());
 		return mongoTemplate.save(comment);
 	}
 	

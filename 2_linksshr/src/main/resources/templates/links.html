@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" 
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{base}">
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{base}"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<title>Links</title>
@@ -12,8 +13,19 @@
 		<div class="col-md-8">
 			<h1 class="page-header" v-once>
 				Links
-				<button id="new-link-btn" class="btn btn-success pull-right"
-					data-toggle="modal" data-target="#linksModal" ><i class="fa fa-plus"></i> New Link</button>
+				<th:block sec:authorize="isAuthenticated()">
+					<button id="new-link-btn" class="btn btn-success pull-right"
+						data-toggle="modal" data-target="#linksModal" >
+						<i class="fa fa-plus"></i> New Link
+					</button>
+				</th:block>	
+				<th:block sec:authorize="not isAuthenticated()">
+					<button id="new-link-btn" class="btn btn-success pull-right disabled"
+						title="Login to create new link!">
+						<i class="fa fa-plus"></i> New Link
+					</button>
+				</th:block>	
+				
 			</h1>
 			<div class="row">
 				<div class="col-md-12 input-group">

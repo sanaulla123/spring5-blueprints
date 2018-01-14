@@ -57,7 +57,6 @@ public class LinkServiceTest {
 		link.setCategory("java");
 		link.setTitle("Getting link detail");
 		link.setUrl("http://sanaulla.info");
-		link.getTags().addAll(Arrays.asList("java", "development"));
 		String linkId = linkService.newLink(link).block().getId();
 		linkIds.add(linkId);
 		link.setId(linkId);

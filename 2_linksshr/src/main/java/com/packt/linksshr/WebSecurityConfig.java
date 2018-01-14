@@ -22,7 +22,7 @@ public class WebSecurityConfig{
 				.and()
 				.formLogin()
 				.and()
-				//.csrf().disable()
+				.csrf().disable()
 				.build();
 	}
 }

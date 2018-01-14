@@ -24,8 +24,9 @@ public class Link {
 	}
 	
 	String category;
-	List<String> tags = new ArrayList<>();
 	String postedBy;
 	LocalDateTime postedOn;
 	LocalDateTime updatedOn;
+	Integer repliesCount = 0;
+	
 }
