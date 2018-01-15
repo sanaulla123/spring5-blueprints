@@ -13,6 +13,9 @@
 		<div class="col-md-8">
 			<h1 class="page-header" v-once>
 				Links
+				<span class="pull-right" th:text="${username}">
+				replaced
+				</span>
 				<th:block sec:authorize="isAuthenticated()">
 					<button id="new-link-btn" class="btn btn-success pull-right"
 						data-toggle="modal" data-target="#linksModal" >

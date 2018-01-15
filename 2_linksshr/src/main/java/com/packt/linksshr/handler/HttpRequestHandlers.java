@@ -3,12 +3,15 @@ package com.packt.linksshr.handler;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.reactive.function.server.RequestPredicates;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
@@ -20,6 +23,7 @@ import com.packt.linksshr.model.Link;
 import com.packt.linksshr.service.CommentService;
 import com.packt.linksshr.service.LinkService;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import reactor.core.publisher.Mono;
 
 @Configuration
@@ -28,10 +32,14 @@ public class HttpRequestHandlers {
 	@Autowired CommentService commentService;
 	
 	Mono<ServerResponse> message(ServerRequest request) {
-		System.out.println(request.principal().block().getName());
-		return ServerResponse.ok()
-				.contentType(MediaType.APPLICATION_JSON)
-				.body(Mono.just("Hello World"), String.class);
+		System.out.println("Username is: " + request.principal().map(Principal::getName).block());
+		return request.principal()
+				.map(Principal::getName)
+				.flatMap(username ->
+					ServerResponse.ok()
+						.contentType(MediaType.APPLICATION_JSON)
+						.syncBody(Collections.singletonMap("message", "Hello " + username + "!"))
+				);
 	}
 	
 	Mono<ServerResponse> getLinks(ServerRequest request) {
@@ -42,13 +50,18 @@ public class HttpRequestHandlers {
 	}
 	
 	Mono<ServerResponse> newLink(ServerRequest request) {
-		Link link = request.bodyToMono(Link.class).block();
-		System.out.println(link);
-		link.setPostedBy(request.principal().block().getName());
-		link.setPostedOn(LocalDateTime.now());
 		return ServerResponse.ok()
 				.contentType(MediaType.APPLICATION_JSON)
-				.body(linkService.newLink(link), Link.class);
+				.body(request.principal().map(Principal::getName)
+						.flatMap( username -> {
+							return request.bodyToMono(Link.class)
+									.flatMap( link -> { 
+										link.setPostedBy(username);
+										link.setPostedOn(LocalDateTime.now());
+										return linkService.newLink(link);
+									});
+						}), Object.class);
+		
 	}
 	
 	Mono<ServerResponse> newComment(ServerRequest request){
