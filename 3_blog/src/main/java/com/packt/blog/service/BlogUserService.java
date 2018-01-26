@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+import org.elasticsearch.ElasticsearchGenerationException;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -26,21 +27,29 @@ public class BlogUserService {
 	
 	@Autowired RestHighLevelClient elasticClient;
 	
-	public BlogUser getUser(String username) throws IOException {
+	public BlogUser getUser(String username) throws Exception {
 		GetRequest request = new GetRequest(index, type, username);
-		return BlogUser.fromMap(elasticClient.get(request).getSource());
+		BlogUser user = new BlogUser();
+		user.fromMap(elasticClient.get(request).getSource());
+		return user;
 	}
 	
-	public IndexResponse addNewUser(BlogUser user) throws IOException {
+	public IndexResponse addNewUser(BlogUser user) throws Exception {
 		IndexRequest request = new IndexRequest(index, type, user.getUsername())
 				.source(user.getAsMap());
 		IndexResponse response = elasticClient.index(request);
 		return response;
 	}
 	
+	public void editUser(BlogUser user) throws Exception { 
+		UpdateRequest request = new UpdateRequest(index, type, user.getUsername())
+				.doc(user.getAsMap());
+		elasticClient.update(request);
+	}
+	
 	public void addRole(String username, String role) throws IOException {
 		Map<String, Object> params = Collections.singletonMap("role", role);
-		Script script = new Script(ScriptType.INLINE, "painless", "ctx._source.roles += params.role", params);
+		Script script = new Script(ScriptType.INLINE, "painless", "ctx._source.roles.add(params.role)", params);
 		UpdateRequest request = new UpdateRequest(index, type, username)
 				.script(script);
 		elasticClient.update(request);

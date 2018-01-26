@@ -26,7 +26,7 @@ public class UserDetailServiceImpl implements UserDetailsService{
 			blogUser = blogUserService.getUser(username);
 			UserPrincipal principal = new UserPrincipal(blogUser);
 			return principal;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.error("Error occurred while getting user from database", e);
 			throw new UsernameNotFoundException("User not found");
 		}

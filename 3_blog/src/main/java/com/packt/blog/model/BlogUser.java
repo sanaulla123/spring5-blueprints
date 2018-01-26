@@ -1,6 +1,7 @@
 package com.packt.blog.model;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
 @Data
-public class BlogUser {
+public class BlogUser implements Mappable{
 	
 	
 	public BlogUser() {}
@@ -29,12 +30,12 @@ public class BlogUser {
 		this.roles = Arrays.asList(roles);
 	}
 	
-	private String username;
-	private String password;
-	private String email;
-	private String name;
-	private Integer enabled = 1;
-	private List<String> roles;
+	 String username;
+	 String password;
+	 String email;
+	 String name;
+	 Integer enabled = 1;
+	 List<String> roles;
 	
 	public void addRole(String role) {
 		if ( roles == null ) {
@@ -43,23 +44,9 @@ public class BlogUser {
 		roles.add(role);
 	}
 	
-	public static BlogUser fromMap(Map<String, Object> map) {
-		BlogUser user = new BlogUser(MapUtils.getString(map, "username"), 
-				MapUtils.getString(map, "password"),
-				MapUtils.getString(map, "email"), 
-				MapUtils.getString(map, "name"));
-		user.setRoles((List<String>)MapUtils.getObject(map, "roles"));
-		return user;
+	@Override
+	public Field getIdField() throws Exception {
+		return this.getClass().getDeclaredField("username");
 	}
 	
-	public Map<String, Object> getAsMap(){
-		Map<String, Object> map = new HashMap<>();
-		map.put("username", username);
-		map.put("password", password);
-		map.put("email", email);
-		map.put("name", name);
-		map.put("enabled", enabled);
-		map.put("roles", roles);
-		return map;
-	}
 }
