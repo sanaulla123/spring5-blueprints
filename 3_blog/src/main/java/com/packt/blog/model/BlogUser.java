@@ -3,6 +3,7 @@ package com.packt.blog.model;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,7 +29,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
 @Data
-@Entity
 public class BlogUser implements Mappable, Serializable {
 
 	public BlogUser() {
@@ -40,32 +40,32 @@ public class BlogUser implements Mappable, Serializable {
 		this.email = email;
 		this.name = name;
 		this.roles = Arrays.asList(roles).stream()
-				.map(role -> new BlogUserRole(username, role))
+				.map(role -> new BlogRole(role))
 				.collect(Collectors.toList());
 	}
 
-	@Id
-	//@GeneratedValue(strategy = GenerationType.IDENTITY)
 	String username;
 	
 	String password;
 	String email;
 	String name;
 	Integer enabled = 1;
-	
-	@OneToMany(mappedBy = "username", cascade = CascadeType.ALL)
-	List<BlogUserRole> roles;
+	LocalDateTime createdOn;
+	String createdBy;
+	LocalDateTime updatedOn;
+	String updatedBy;
+	List<BlogRole> roles;
 
 	public void addRole(String aRole) {
 		if (roles == null) {
 			roles = new ArrayList<>();
 		}
-		roles.add(new BlogUserRole(this.username, aRole));
+		roles.add(new BlogRole(aRole));
 	}
 
 	@Override
 	public Field getIdField() throws Exception {
 		return this.getClass().getDeclaredField("username");
 	}
-
+	
 }

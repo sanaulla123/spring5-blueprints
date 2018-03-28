@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.packt.blog.model.BlogPost;
 
-public class BlogPostService {
+public class BlogPostEsService {
 
 	@Autowired RestHighLevelClient esClient;
 	private static final String index = "blog";

@@ -1,19 +1,9 @@
 package com.packt.blog.service;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
+import org.jooq.DSLContext;
+import org.jooq.Result;
 
-import org.elasticsearch.ElasticsearchGenerationException;
-import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetRequest;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.script.Script;
-import org.elasticsearch.script.ScriptType;
+import static org.jooq.impl.DSL.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,41 +12,28 @@ import com.packt.blog.model.BlogUser;
 @Service
 public class BlogUserService {
 
-	private static final String index = "user";
-	private static final String type  = "user";
-	
-	@Autowired RestHighLevelClient elasticClient;
-	
-	public BlogUser getUser(String username) throws Exception {
-		GetRequest request = new GetRequest(index, type, username);
-		BlogUser user = new BlogUser();
-		user.fromMap(elasticClient.get(request).getSource());
-		return user;
+	@Autowired private DSLContext create;
+
+	public boolean addNewUser(BlogUser user) {
+		int rows = create.insertInto(table("blog_user"))
+			.set(field("username"), user.getUsername())
+			.set(field("email"), user.getEmail())
+			.set(field("password"), user.getPassword())
+			.set(field("name"), user.getName())
+			.set(field("enabled"), user.getEnabled())
+			.execute();
+		return rows == 1;
 	}
 	
-	public IndexResponse addNewUser(BlogUser user) throws Exception {
-		IndexRequest request = new IndexRequest(index, type, user.getUsername())
-				.source(user.getAsMap());
-		IndexResponse response = elasticClient.index(request);
-		return response;
-	}
-	
-	public void editUser(BlogUser user) throws Exception { 
-		UpdateRequest request = new UpdateRequest(index, type, user.getUsername())
-				.doc(user.getAsMap());
-		elasticClient.update(request);
-	}
-	
-	public void addRole(String username, String role) throws IOException {
-		Map<String, Object> params = Collections.singletonMap("role", role);
-		Script script = new Script(ScriptType.INLINE, "painless", "ctx._source.roles.add(params.role)", params);
-		UpdateRequest request = new UpdateRequest(index, type, username)
-				.script(script);
-		elasticClient.update(request);
-	}
-	
-	public DeleteResponse deleteUser(String username) throws IOException {
-		DeleteRequest request = new DeleteRequest(index, type, username);
-		return elasticClient.delete(request);
+	public void getUserDetail(String username) {
+		create.select(field("u.username"), field("u.email"), 
+				field("u.password"), field("u.name"), 
+				field("u.enabled"), field("u.role_name"))
+			.from(table("blog_user").as("u"))
+			.leftOuterJoin(table("blog_user_role").as("ur"))
+				.on(field("ur.username").eq(field("u.username")))
+			.where(field("u.username").eq(username))
+			.fetch();
+			
 	}
 }

@@ -4,7 +4,11 @@ create table blog_user(
 	email varchar2(512) not null unique,
 	password varchar2(512) not null,
 	name varchar2(1024) not null,
-	enabled number(1) not null default 1
+	enabled number(1) not null default 1,
+	created_on DATETIME not null default sysdate,
+	created_by varchar2(255),
+	updated_on DATETIME,
+	updated_by varchar2(255)
 );
 
 drop table if exists blog_role;

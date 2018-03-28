@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserDetailServiceImpl implements UserDetailsService{
 
-	@Autowired BlogUserService blogUserService;
+	@Autowired BlogUserEsService blogUserService;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

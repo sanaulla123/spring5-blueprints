@@ -16,8 +16,8 @@ import com.packt.blog.model.BlogPost;
 @SpringBootTest
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
-public class BlogPostServiceTest {
-	@Autowired BlogPostService blogPostService;
+public class BlogPostEsServiceTest {
+	@Autowired BlogPostEsService blogPostService;
 	
 	@Test public void test_addBlogPost() throws Exception{
 		BlogPost post = buildNewBlogPost();
