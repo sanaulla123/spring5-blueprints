@@ -2,8 +2,6 @@ package com.packt.blog.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-
 import lombok.Data;
 
 @Data

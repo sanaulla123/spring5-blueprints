@@ -23,7 +23,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
 			.anyRequest().authenticated()
 			.and()
 		.authenticationProvider(daoAuthenticationProvider())
-		.formLogin();
+		.formLogin()
+	        .loginPage("/login")
+	        .permitAll()
+	        .and()
+	    .logout()
+	        .permitAll();
 	}
 	
 	@Bean

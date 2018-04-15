@@ -1,8 +1,11 @@
 package com.packt.blog.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
+import org.assertj.core.util.Arrays;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +21,9 @@ public class UserPrincipal implements UserDetails {
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return blogUser.getRoles().stream().map( r -> new SimpleGrantedAuthority(r.getRoleName()) )
-				.collect(Collectors.toList());
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority(blogUser.getRoleName()));
+		return authorities;	
 	}
 
 	@Override

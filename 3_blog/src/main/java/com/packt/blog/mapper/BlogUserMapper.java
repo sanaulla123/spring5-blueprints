@@ -14,4 +14,5 @@ public interface BlogUserMapper {
 	public void updatePassword(Map<String, Object> params);
 	public void updateEnabled(Map<String, Object> params);
 	public void updateUser(BlogUser user);
+	public void updateRole(Map<String, Object> params);
 }

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.packt.blog.mapper.BlogUserMapper;
 import com.packt.blog.model.BlogUser;
 import com.packt.blog.model.UserPrincipal;
 
@@ -17,13 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class UserDetailServiceImpl implements UserDetailsService{
 
-	@Autowired BlogUserEsService blogUserService;
+	@Autowired BlogUserMapper blogUserMapper;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		BlogUser blogUser;
 		try {
-			blogUser = blogUserService.getUser(username);
+			blogUser = blogUserMapper.getUser(username);
 			UserPrincipal principal = new UserPrincipal(blogUser);
 			return principal;
 		} catch (Exception e) {

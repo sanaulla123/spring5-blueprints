@@ -5,6 +5,7 @@ create table blog_user(
 	password varchar2(512) not null,
 	name varchar2(1024) not null,
 	enabled number(1) not null default 1,
+	role_name varchar2(255) not null default 'user', 
 	created_on DATETIME not null default sysdate,
 	created_by varchar2(255),
 	updated_on DATETIME,

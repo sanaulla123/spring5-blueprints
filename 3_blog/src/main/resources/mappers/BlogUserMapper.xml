@@ -4,33 +4,17 @@
 
 <mapper namespace="com.packt.blog.mapper.BlogUserMapper">
 	<insert id="addNewUser" parameterType="com.packt.blog.model.BlogUser">
-		INSERT INTO blog_user(username, email, password, name, enabled, created_by)
+		INSERT INTO blog_user(username, email, password, name, enabled, role_name, created_by)
 		VALUES(#{username:VARCHAR}, #{email:VARCHAR}, #{password:VARCHAR}, 
-			#{name:VARCHAR}, #{enabled:NUMERIC}, #{createdBy:VARCHAR})
+			#{name:VARCHAR}, #{enabled:NUMERIC}, #{roleName:VARCHAR}, #{createdBy:VARCHAR})
 	</insert>
-	
-	<resultMap type="com.packt.blog.model.BlogUser" id="user-detail-map">
-		<id property="username" column="username"/>
-		<result property="email" column="email"/>
-		<result property="password" column="password"/>
-		<result property="name" column="name"/>
-		<result property="enabled" column="enabled"/>
-		<result property="createdBy" column="created_by" />
-		<result property="createdOn" column="created_on" />
-		<result property="updatedBy" column="updated_by" />
-		<result property="updatedOn" column="updated_on" />
-		<collection property="roles" javaType="list" ofType="com.packt.blog.model.BlogRole" 
-			column="username">
-			<id property="roleName" column="role_name" />
-		</collection>
-	</resultMap>
-	
-	<select id="getUser" parameterType="string" resultMap="user-detail-map">
+
+	<select id="getUser" parameterType="string" resultType="com.packt.blog.model.BlogUser">
 		SELECT u.username, u.email, u.password, u.name,
 			u.enabled, u.created_by, u.created_on, 
-			u.updated_by, u.updated_on, ur.role_name
+			u.updated_by, u.updated_on, u.role_name
 		FROM blog_user u
-		LEFT OUTER JOIN blog_user_role ur ON ur.username = u.username
+		WHERE u.username = #{username}
 	</select>
 
 	<update id="updatePassword" parameterType="map">
@@ -49,6 +33,14 @@
 		WHERE username = #{username}
 	</update>
 	
+	<update id="updateRole" parameterType="map">
+		UPDATE blog_user SET 
+			role_name = #{roleName},
+			updated_by = #{updatedBy},
+			updated_on = sysdate 
+		WHERE username = #{username}
+	</update>
+	
 	<update id="updateUser" parameterType="com.packt.blog.model.BlogUser">
 		UPDATE blog_user SET 
 			email = #{email:VARCHAR},
@@ -57,4 +49,5 @@
 			updated_on = sysdate
 		WHERE username = #{username}
 	</update>
+	
 </mapper>
